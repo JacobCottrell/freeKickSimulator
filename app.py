@@ -48,6 +48,9 @@ PRESETS = {
     "Custom": None,
     "Ronaldo": {
         "force_mode": FORCE_MODE_FULL,
+        "x0": 0.0,
+        "y0": 0.0,
+        "z0": 0.0,
         "vx": 30.0,
         "vy": 0.0,
         "vz": 8.0,
@@ -59,6 +62,9 @@ PRESETS = {
     },
     "Beckham": {
         "force_mode": FORCE_MODE_FULL,
+        "x0": 0.0,
+        "y0": 0.0,
+        "z0": 0.0,
         "vx": 24.0,
         "vy": 0.0,
         "vz": 11.0,
@@ -68,8 +74,11 @@ PRESETS = {
         "cl": 0.30,
         "goal_x": 30.0,
     },
-    "Carlos": {
+    "Roberto Carlos": {
         "force_mode": FORCE_MODE_FULL,
+        "x0": 0.0,
+        "y0": -2.0,
+        "z0": 0.0,
         "vx": 40.0,
         "vy": -10.0,
         "vz": 6.5,
@@ -81,6 +90,9 @@ PRESETS = {
     },
     "Messi": {
         "force_mode": FORCE_MODE_FULL,
+        "x0": 0.0,
+        "y0": 0.0,
+        "z0": 0.0,
         "vx": 22.0,
         "vy": 0.0,
         "vz": 12.0,
@@ -96,7 +108,7 @@ DEFAULTS = {
     "force_mode": FORCE_MODE_FULL,
     "x0": 0.0,
     "y0": 0.0,
-    "z0": 0.01,
+    "z0": 0.0,
     "vx": 24.0,
     "vy": 0.0,
     "vz": 10.0,
@@ -410,42 +422,55 @@ def build_trajectory_figure(x, y, z, x0, y0, z0, goal_x, traj_color, goal_point)
 # ==============================
 # Sidebar controls
 # ==============================
+def apply_preset(name):
+    preset = PRESETS.get(name)
+    if not preset:
+        return
+    for key, value in preset.items():
+        st.session_state[key] = value
+    st.session_state["preset_name"] = name
+
+
+for key, value in DEFAULTS.items():
+    st.session_state.setdefault(key, value)
+st.session_state.setdefault("preset_name", "Custom")
+
+
 with st.sidebar:
     st.header("Controls")
-    preset_name = st.selectbox("Preset", list(PRESETS.keys()), index=0)
-    preset = PRESETS[preset_name]
+    preset_name = st.selectbox("Preset", list(PRESETS.keys()), key="preset_name")
 
-    current = DEFAULTS.copy()
-    if preset:
-        current.update(preset)
+    if preset_name != "Custom" and st.button("Apply preset"):
+        apply_preset(preset_name)
+        st.rerun()
 
-    force_mode = st.radio("Force model", FORCE_MODES, index=FORCE_MODES.index(current["force_mode"]))
+    force_mode = st.radio("Force model", FORCE_MODES, key="force_mode")
 
     st.subheader("Start position")
-    x0 = st.slider("X", -5.0, 5.0, float(current["x0"]), 0.5)
-    y0 = st.slider("Y", -10.0, 10.0, float(current["y0"]), 0.5)
-    z0 = st.slider("Z", 0.0, 3.0, float(current["z0"]), 0.1)
+    x0 = st.slider("X", -5.0, 5.0, step=0.5, key="x0")
+    y0 = st.slider("Y", -10.0, 10.0, step=0.5, key="y0")
+    z0 = st.slider("Z", 0.0, 3.0, step=0.1, key="z0")
 
     st.subheader("Velocity")
-    vx = st.slider("Forward velocity", 10.0, 40.0, float(current["vx"]), 0.5)
-    vy = st.slider("Lateral velocity", -10.0, 10.0, float(current["vy"]), 0.5)
-    vz = st.slider("Upward velocity", 0.0, 20.0, float(current["vz"]), 0.5)
+    vx = st.slider("Forward velocity", 10.0, 40.0, step=0.5, key="vx")
+    vy = st.slider("Lateral velocity", -10.0, 10.0, step=0.5, key="vy")
+    vz = st.slider("Upward velocity", 0.0, 20.0, step=0.5, key="vz")
 
     st.subheader("Spin")
     spin_side = st.slider(
         "Side spin (RPM)",
         -600.0,
         600.0,
-        float(current["spin_side"]),
-        10.0,
+        step=10.0,
+        key="spin_side",
         disabled=force_mode != FORCE_MODE_FULL,
     )
     spin_top = st.slider(
         "Top spin (RPM)",
         -600.0,
         600.0,
-        float(current["spin_top"]),
-        10.0,
+        step=10.0,
+        key="spin_top",
         disabled=force_mode != FORCE_MODE_FULL,
     )
 
@@ -454,19 +479,19 @@ with st.sidebar:
         "Drag coefficient (CD)",
         0.1,
         0.6,
-        float(current["cd"]),
-        0.05,
+        step=0.05,
+        key="cd",
         disabled=force_mode in [FORCE_MODE_NONE, FORCE_MODE_GRAVITY],
     )
     cl = st.slider(
         "Lift coefficient (CL)",
         0.0,
         0.6,
-        float(current["cl"]),
-        0.05,
+        step=0.05,
+        key="cl",
         disabled=force_mode != FORCE_MODE_FULL,
     )
-    goal_x = st.slider("Goal distance (m)", 10.0, 40.0, float(current["goal_x"]), 1.0)
+    goal_x = st.slider("Goal distance (m)", 10.0, 40.0, step=1.0, key="goal_x")
 
 # ==============================
 # Calculation
