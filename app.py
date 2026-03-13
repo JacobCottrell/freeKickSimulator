@@ -46,35 +46,41 @@ FORCE_MODES = [
 
 PRESETS = {
     "Custom": None,
-    "Ronaldo": {
+    "Cristiano Ronaldo (vs Arsenal)": {
         "force_mode": FORCE_MODE_FULL,
-        "vx": 30.0,
-        "vy": 0.0,
+        "x0": 0.0,
+        "y0": -7.0,
+        "z0": 0.0,
+        "v_horizontal": 40.0,
+        "launch_angle_deg": 5.0,
         "vz": 8.0,
         "spin_side": 0.0,
         "spin_top": 2.0,
         "cd": 0.35,
         "cl": 0.02,
-        "goal_x": 25.0,
+        "goal_x": 36.0,
     },
-    "Beckham": {
+    "David Beckham (vs Everton)": {
         "force_mode": FORCE_MODE_FULL,
-        "vx": 24.0,
-        "vy": 0.0,
-        "vz": 11.0,
+        "x0": 0.0,
+        "y0": -10.0,
+        "z0": 0.0,
+        "v_horizontal": 27.0,
+        "launch_angle_deg": 17.0,
+        "vz": 8.0,
         "spin_side": 0.0,
-        "spin_top": 35.0,
+        "spin_top": 60.0,
         "cd": 0.25,
-        "cl": 0.30,
-        "goal_x": 30.0,
+        "cl": 0.50,
+        "goal_x": 19.0,
     },
-    "Roberto Carlos": {
+    "Roberto Carlos (vs France)": {
         "force_mode": FORCE_MODE_FULL,
         "x0": 0.0,
         "y0": -2.0,
         "z0": 0.0,
-        "vx": 40.0,
-        "vy": -10.0,
+        "v_horizontal": 39.0,
+        "launch_angle_deg": -14.0,
         "vz": 6.5,
         "spin_side": 0.0,
         "spin_top": 60.0,
@@ -82,16 +88,19 @@ PRESETS = {
         "cl": 0.25,
         "goal_x": 29.0,
     },
-    "Messi": {
+    "Messi (vs Liverpool)": {
         "force_mode": FORCE_MODE_FULL,
-        "vx": 22.0,
-        "vy": 0.0,
-        "vz": 12.0,
+        "x0": 0.0,
+        "y0": 0.0,
+        "z0": 0.0,
+        "v_horizontal": 26.5,
+        "launch_angle_deg": 30.0,
+        "vz": 9.5,
         "spin_side": 0.0,
-        "spin_top": 40.0,
+        "spin_top": -50.0,
         "cd": 0.25,
-        "cl": 0.32,
-        "goal_x": 22.0,
+        "cl": 0.5,
+        "goal_x": 29.0,
     },
 }
 
@@ -100,8 +109,8 @@ DEFAULTS = {
     "x0": 0.0,
     "y0": 0.0,
     "z0": 0.01,
-    "vx": 24.0,
-    "vy": 0.0,
+    "v_horizontal": 24.0,
+    "launch_angle_deg": 0.0,
     "vz": 10.0,
     "spin_side": 0.0,
     "spin_top": 20.0,
@@ -430,8 +439,8 @@ with st.sidebar:
     z0 = st.slider("Z", 0.0, 3.0, float(current["z0"]), 0.1)
 
     st.subheader("Velocity")
-    vx = st.slider("Forward velocity", 10.0, 40.0, float(current["vx"]), 0.5)
-    vy = st.slider("Lateral velocity", -10.0, 10.0, float(current["vy"]), 0.5)
+    v_horizontal = st.slider("Horizontal speed", 0.0, 40.0, float(current["v_horizontal"]), 0.5)
+    launch_angle_deg = st.slider("Launch direction (deg)", -180.0, 180.0, float(current["launch_angle_deg"]), 1.0)
     vz = st.slider("Upward velocity", 0.0, 20.0, float(current["vz"]), 0.5)
 
     st.subheader("Spin")
@@ -474,6 +483,10 @@ with st.sidebar:
 # ==============================
 # Calculation
 # ==============================
+theta = np.radians(launch_angle_deg)
+vx = v_horizontal * np.cos(theta)
+vy = v_horizontal * np.sin(theta)
+
 omega_x = spin_side * (2 * np.pi / 60)
 omega_z = spin_top * (2 * np.pi / 60)
 omega_y = 0.0
@@ -512,7 +525,7 @@ else:
 if is_goal:
     status_text = "GOAL!"
 
-angle = float(np.degrees(np.arctan2(vz, vx)))
+elevation_angle = float(np.degrees(np.arctan2(vz, max(v_horizontal, 1e-9))))
 distance = float(np.max(x) - x0) if len(x) > 0 else 0.0
 max_height = float(np.max(z)) if len(z) > 0 else 0.0
 
@@ -522,7 +535,7 @@ max_height = float(np.max(z)) if len(z) > 0 else 0.0
 metric_cols = st.columns(6)
 metric_cols[0].metric("Outcome", "Goal" if is_goal else "Miss")
 metric_cols[1].metric("Launch speed", f"{U0:.1f} m/s")
-metric_cols[2].metric("Launch angle", f"{angle:.1f}°")
+metric_cols[2].metric("Direction", f"{launch_angle_deg:.1f}°")
 metric_cols[3].metric("Spin", f"{omega_total * 60 / (2 * np.pi):.0f} RPM")
 metric_cols[4].metric("Distance", f"{distance:.1f} m")
 metric_cols[5].metric("Max height", f"{max_height:.1f} m")
@@ -533,6 +546,8 @@ with left:
     st.markdown("### Classification")
     st.write(f"**Force model:** {force_mode}")
     st.write(f"**Trajectory type:** {trajectory_type}")
+    st.write(f"**Direction / elevation:** {launch_angle_deg:.1f}° / {elevation_angle:.1f}°")
+    st.write(f"**Velocity components:** vx={vx:.2f} m/s, vy={vy:.2f} m/s, vz={vz:.2f} m/s")
     st.write(f"**Status:** {status_text}")
     st.write(f"**Drag number:** {D_r:.3f}")
     st.write(f"**Spin number:** {SP:.3f}")
