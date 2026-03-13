@@ -68,8 +68,11 @@ PRESETS = {
         "cl": 0.30,
         "goal_x": 30.0,
     },
-    "Carlos": {
+    "Roberto Carlos": {
         "force_mode": FORCE_MODE_FULL,
+        "x0": 0.0,
+        "y0": -2.0,
+        "z0": 0.0,
         "vx": 40.0,
         "vy": -10.0,
         "vz": 6.5,
