@@ -14,8 +14,7 @@ st.set_page_config(
 
 st.title("⚽ Free Kick Simulator")
 st.caption(
-    "Interactive browser version of your Python free-kick trajectory simulator. "
-    "Tune launch, drag, and spin values to see the ball path and whether it scores."
+    ""
 )
 
 # ==============================
