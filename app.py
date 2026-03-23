@@ -2,6 +2,7 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 from scipy.integrate import solve_ivp
+from supabase import create_client
 
 # ==============================
 # Page config
@@ -16,6 +17,26 @@ st.title("⚽ Free Kick Simulator")
 st.caption(
     ""
 )
+
+@st.cache_resource
+def get_supabase():
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
+def increment_visit_count():
+    supabase = get_supabase()
+
+    result = supabase.table("site_stats").select("count").eq("name", "visits").execute()
+    current = result.data[0]["count"]
+
+    new_count = current + 1
+    supabase.table("site_stats").update({"count": new_count}).eq("name", "visits").execute()
+
+    return new_count
+
+visit_count = increment_visit_count()
+st.metric("Website visits", visit_count)
 
 # ==============================
 # Physics Constants
