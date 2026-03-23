@@ -20,8 +20,8 @@ st.caption(
 
 @st.cache_resource
 def get_supabase():
-    url = st.secrets["SUPABASE_URL"]
-    key = st.secrets["SUPABASE_KEY"]
+    url = st.secrets["https://rctzyhkgoqpjkdixphkk.supabase.co"]
+    key = st.secrets["sb_publishable_1FPNgfBnuk-EVnh4bKx0zw_V8rxLR_1"]
     return create_client(url, key)
 
 def increment_visit_count():
