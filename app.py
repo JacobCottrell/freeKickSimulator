@@ -557,9 +557,6 @@ with right:
 
 with st.expander("About this web app"):
     st.write(
-        "This interactive web app simulates the trajectory of a football during a free kick using real physical models. Users can adjust parameters such as initial velocity, spin, air resistance, and starting position to see how they affect the ball’s path through the air."
-        "The simulator models several forces acting on the ball, including gravity, aerodynamic drag, and the Magnus effect caused by spin. These forces are solved numerically to calculate the ball’s motion in three dimensions, allowing realistic curved and dipping shots to be reproduced."
-        "The app also classifies each shot using dimensionless parameters such as the drag number and spin number, showing where the kick lies on a phase diagram of different trajectory regimes (parabolic, knuckleball, curved, spiral, etc.)."
-        "A 3D visualization displays the ball’s flight path toward the goal, along with indicators showing whether the shot results in a goal or miss. Preset configurations based on famous free kicks allow users to quickly explore different styles of shots."
-        "Overall, the simulator demonstrates how physics principles like aerodynamics and rotational forces influence football trajectories, providing both a learning tool and an interactive exploration of free kick dynamics."
+        "This app was created for Communicating Mathemtics during my Final Year at the UNiversity of bath and links to my video created here: https://youtu.be/iq1Trh52D5I?si=cs5kx7pQFFFMHuQd"
+        "It uses the system of differential equations referenced in the video to calculate the trajectory of the ball. If you have any feedback feel free to leave a comment on the video, Thanks!"
     )
