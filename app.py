@@ -557,6 +557,6 @@ with right:
 
 with st.expander("About this web app"):
     st.write(
-        "This app was created for Communicating Mathemtics during my Final Year at the UNiversity of bath and links to my video created here: https://youtu.be/iq1Trh52D5I?si=cs5kx7pQFFFMHuQd"
+        "This app was created for Communicating Mathemtics during my Final Year at the UNiversity of bath and links to my video created here: https://youtu.be/iq1Trh52D5I?si=cs5kx7pQFFFMHuQd "
         "It uses the system of differential equations referenced in the video to calculate the trajectory of the ball. If you have any feedback feel free to leave a comment on the video, Thanks!"
     )
