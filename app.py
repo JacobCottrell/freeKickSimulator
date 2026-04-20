@@ -3,9 +3,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from scipy.integrate import solve_ivp
 
-# ==============================
-# Page config
-# ==============================
+#config of the page
 st.set_page_config(
     page_title="Free Kick Simulator",
     page_icon="⚽",
@@ -17,9 +15,7 @@ st.caption(
     ""
 )
 
-# ==============================
-# Physics Constants
-# ==============================
+#physics constants used throughout
 g = 9.81        # Gravity (m/s^2)
 rho = 1.2       # Air density (kg/m^3)
 R = 0.11        # Ball radius (m)
@@ -42,6 +38,8 @@ FORCE_MODES = [
     FORCE_MODE_DRAG,
     FORCE_MODE_FULL,
 ]
+
+#presets for famous freekicks
 
 PRESETS = {
     "Custom": None,
@@ -418,9 +416,8 @@ def build_trajectory_figure(x, y, z, x0, y0, z0, goal_x, traj_color, goal_point)
     return fig
 
 
-# ==============================
-# Sidebar controls
-# ==============================
+#controls of sidebar 
+
 with st.sidebar:
     st.header("Controls")
     preset_name = st.selectbox("Preset", list(PRESETS.keys()), index=0)
@@ -479,9 +476,8 @@ with st.sidebar:
     )
     goal_x = st.slider("Goal distance (m)", 10.0, 40.0, float(current["goal_x"]), 1.0)
 
-# ==============================
-# Calculation
-# ==============================
+#differential equations calculations
+
 theta = np.radians(launch_angle_deg)
 vx = v_horizontal * np.cos(theta)
 vy = v_horizontal * np.sin(theta)
@@ -528,9 +524,8 @@ elevation_angle = float(np.degrees(np.arctan2(vz, max(v_horizontal, 1e-9))))
 distance = float(np.max(x) - x0) if len(x) > 0 else 0.0
 max_height = float(np.max(z)) if len(z) > 0 else 0.0
 
-# ==============================
-# Layout
-# ==============================
+#page design
+
 metric_cols = st.columns(6)
 metric_cols[0].metric("Outcome", "Goal" if is_goal else "Miss")
 metric_cols[1].metric("Launch speed", f"{U0:.1f} m/s")
